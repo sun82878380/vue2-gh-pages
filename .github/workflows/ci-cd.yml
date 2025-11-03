@@ -1,38 +1,36 @@
 name: Vue2 CI/CD to GitHub Pages
 
-# 触发条件：推送到master分支时执行
 on:
   push:
     branches: [ master ]
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-latest # 使用Ubuntu系统运行
+    runs-on: ubuntu-latest
 
     steps:
-      # 1. 拉取代码
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. 设置Node环境（Vue2兼容Node 14+，推荐16）
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 16
-          cache: 'npm' # 缓存npm依赖，加速构建
+          cache: 'npm'
 
-      # 3. 安装依赖
       - name: Install dependencies
         run: npm install
 
-      # 4. 打包项目（生成dist目录）
+      # 新增：代码质量检查（ESLint）
+      - name: Run code quality check (ESLint)
+        run: npm run lint  # 执行package.json中定义的lint命令
+
       - name: Build project
         run: npm run build
 
-      # 5. 部署到GitHub Pages（使用现成的action工具）
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GH_TOKEN }} # 使用之前添加的Secret
-          publish_dir: ./dist # 打包后的目录（Vue默认dist）
-          publish_branch: gh-pages # 部署到gh-pages分支（自动创建）
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # 建议改用默认Token，更安全
+          publish_dir: ./dist
+          publish_branch: gh-pages

@@ -5,8 +5,12 @@
 </template>
 
 <script>
+import Test from "./components/test.vue"
 export default {
   name: 'App',
+  mounted(){
+    console.log(234);
+  },
 }
 </script>
 
